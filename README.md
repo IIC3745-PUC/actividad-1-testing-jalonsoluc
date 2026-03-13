@@ -1,1 +1,8 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/AG7uuOyW)
+Respecto al uso de IA para esta actividad:
+
+- Se usó GPT-5.4 en Cursor (en modo Ask, no Agent).
+- En el archivo `test_pricing_service.py`, su uso consistió, principalmente, en:
+    - Explicar la diferencia de sintáxis entre `pytest` y `unittest`.
+    - Aclarar dudas sobre como estructurar tests para _Statement Coverage_.
+    - Explicar el uso de `self.assertRaises(...) as context`, y cómo se puede usar para verificar el mensaje de error asociado.
+    - Entre otras dudas de menor relevancia.
