@@ -15,11 +15,15 @@ class ChargeResult:
 
 
 class PaymentGateway(Protocol):
-    def charge(self, user_id: str, amount_cents: int, payment_token: str) -> ChargeResult: ...  # pragma: no cover
+    def charge(
+        self, user_id: str, amount_cents: int, payment_token: str
+    ) -> ChargeResult: ...  # pragma: no cover
 
 
 class EmailService(Protocol):
-    def send_receipt(self, user_id: str, order_id: str, total_cents: int) -> None: ...  # pragma: no cover
+    def send_receipt(
+        self, user_id: str, order_id: str, total_cents: int
+    ) -> None: ...  # pragma: no cover
 
 
 class FraudScorer(Protocol):
@@ -37,6 +41,7 @@ class CheckoutService:
     - Cobra con PaymentGateway
     - Guarda orden y envía recibo
     """
+
     def __init__(
         self,
         payments: PaymentGateway,
@@ -70,7 +75,9 @@ class CheckoutService:
         if self.fraud.score(user_id, amount) >= 80:
             return "REJECTED_FRAUD"
 
-        result = self.payments.charge(user_id=user_id, amount_cents=amount, payment_token=payment_token)
+        result = self.payments.charge(
+            user_id=user_id, amount_cents=amount, payment_token=payment_token
+        )
         if not result.ok:
             return f"PAYMENT_FAILED:{result.reason}"
 

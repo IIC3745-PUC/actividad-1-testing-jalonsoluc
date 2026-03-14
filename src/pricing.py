@@ -66,7 +66,9 @@ class PricingService:
             return 5000
         raise PricingError("unsupported country")
 
-    def total_cents(self, items: Iterable[CartItem], coupon_code: Optional[str], country: str) -> int:
+    def total_cents(
+        self, items: Iterable[CartItem], coupon_code: Optional[str], country: str
+    ) -> int:
         sub = self.subtotal_cents(items)
         net = self.apply_coupon(sub, coupon_code)
         return net + self.tax_cents(net, country) + self.shipping_cents(net, country)

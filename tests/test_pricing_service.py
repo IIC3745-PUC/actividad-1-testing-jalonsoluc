@@ -33,15 +33,29 @@ class TestPricingService(unittest.TestCase):
 
         self.assertEqual(subtotal, 1)
 
+    def test_apply_coupon_empty_coupon_success(self):
+        subtotal = self.pricing_service.apply_coupon(subtotal=1, coupon_code=" ")
+
+        self.assertEqual(subtotal, 1)
+
     def test_apply_coupon_pct_success(self):
         subtotal = self.pricing_service.apply_coupon(subtotal=100, coupon_code="SAVE10")
 
         self.assertEqual(subtotal, 90)
 
-    def test_apply_coupon_abs_success(self):
-        subtotal = self.pricing_service.apply_coupon(subtotal=3000, coupon_code="CLP2000")
+    def test_apply_coupon_abs_success_not_free(self):
+        subtotal = self.pricing_service.apply_coupon(
+            subtotal=3000, coupon_code="CLP2000"
+        )
 
         self.assertEqual(subtotal, 1000)
+
+    def test_apply_coupon_abs_success_free(self):
+        subtotal = self.pricing_service.apply_coupon(
+            subtotal=2000, coupon_code="CLP2000"
+        )
+
+        self.assertEqual(subtotal, 0)
 
     def test_apply_coupon_invalid_coupon(self):
         with self.assertRaises(PricingError) as context:
@@ -70,13 +84,24 @@ class TestPricingService(unittest.TestCase):
 
         self.assertEqual(str(context.exception), "unsupported country")
 
-    def test_shipping_cents_success_cl(self):
-        shipping_cents = self.pricing_service.shipping_cents(net_subtotal=20000, country="CL")
+    def test_shipping_cents_success_cl_over_or_equal_to_20k(self):
+        shipping_cents = self.pricing_service.shipping_cents(
+            net_subtotal=20000, country="CL"
+        )
 
         self.assertEqual(shipping_cents, 0)
 
+    def test_shipping_cents_success_cl_under_20k(self):
+        shipping_cents = self.pricing_service.shipping_cents(
+            net_subtotal=15000, country="CL"
+        )
+
+        self.assertEqual(shipping_cents, 2500)
+
     def test_shipping_cents_success_us(self):
-        shipping_cents = self.pricing_service.shipping_cents(net_subtotal=20000, country="US")
+        shipping_cents = self.pricing_service.shipping_cents(
+            net_subtotal=20000, country="US"
+        )
 
         self.assertEqual(shipping_cents, 5000)
 
@@ -88,6 +113,8 @@ class TestPricingService(unittest.TestCase):
 
     def test_total_cents_success(self):
         items = [CartItem(sku=0, unit_price_cents=0, qty=1)]
-        total_cents = self.pricing_service.total_cents(items, coupon_code=None, country="US")
+        total_cents = self.pricing_service.total_cents(
+            items, coupon_code=None, country="US"
+        )
 
         self.assertEqual(total_cents, 5000)
